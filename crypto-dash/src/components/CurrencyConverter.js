@@ -1,11 +1,36 @@
-import { useState } from 'react'
+import { useState } from "react";
 import ExchangeRate from "./ExchangeRate";
+import axios from "axios";
 
 const CurrencyConverter = () => {
   const currencies = ["BTC", "ETH", "USD", "XRP", "LTC", "ADA"];
-  const [selectedPrimaryCurrency, setSelectedPrimaryCurrency] = useState("BTC")
-  const [selectedSeconderyCurrency, setSelectedSeconderyCurrency] = useState("BTC")
+  const [selectedPrimaryCurrency, setSelectedPrimaryCurrency] = useState("BTC");
+  const [selectedSeconderyCurrency, setSelectedSeconderyCurrency] =
+    useState("BTC");
+  const [ammount, setAmmount] = useState(1);
+  const [exchangeAmmount, setExchangeAmmount] = useState(0)
+  const [result, setResult] = useState(0)
 
+  const convert = () => {
+    const options = {
+      method: 'GET',
+      url: 'https://alpha-vantage.p.rapidapi.com/query',
+      params: {from_currency: selectedPrimaryCurrency, function: 'CURRENCY_EXCHANGE_RATE', to_currency: selectedSeconderyCurrency},
+      headers: {
+        'X-RapidAPI-Host': 'alpha-vantage.p.rapidapi.com',
+        'X-RapidAPI-Key': 'e6476deb2dmshb2f511ebd65470fp10d0d2jsn7afb221ccb03'
+      }
+    };
+    
+    axios.request(options).then(function (response) {
+      console.log(response.data['Realtime Currency Exchange Rate']['5. Exchange Rate']);
+      setExchangeAmmount(response.data['Realtime Currency Exchange Rate']['5. Exchange Rate'])
+      setResult(response.data['Realtime Currency Exchange Rate']['5. Exchange Rate'] * ammount)
+    }).catch(function (error) {
+      console.error(error);
+    });
+  };
+  console.log(exchangeAmmount)
 
   return (
     <div className="currency-converter">
@@ -16,7 +41,12 @@ const CurrencyConverter = () => {
             <tr>
               <td>Primary Currency</td>
               <td>
-                <input type="number" name="currency-ammount-1" value={""} />
+                <input
+                  type="number"
+                  name="currency-ammount-1"
+                  value={ammount}
+                  onChange={(e) => setAmmount(e.target.value)}
+                />
               </td>
               <td>
                 <select
@@ -34,7 +64,7 @@ const CurrencyConverter = () => {
             <tr>
               <td>Secondery Currency</td>
               <td>
-                <input type="number" name="currency-ammount-2" value={""} />
+                <input type="number" name="currency-ammount-2" value={result} />
               </td>
               <td>
                 <select
@@ -43,7 +73,7 @@ const CurrencyConverter = () => {
                   className="currency-options"
                   onChange={(e) => setSelectedSeconderyCurrency(e.target.value)}
                 >
-                   {currencies.map((currency, _index) => (
+                  {currencies.map((currency, _index) => (
                     <option key={_index}>{currency}</option>
                   ))}
                 </select>
@@ -51,6 +81,9 @@ const CurrencyConverter = () => {
             </tr>
           </tbody>
         </table>
+        <button id="convert-button" onClick={convert}>
+          Convert
+        </button>
       </div>
 
       <ExchangeRate />
