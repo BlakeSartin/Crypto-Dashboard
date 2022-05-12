@@ -8,29 +8,43 @@ const CurrencyConverter = () => {
   const [selectedSeconderyCurrency, setSelectedSeconderyCurrency] =
     useState("BTC");
   const [ammount, setAmmount] = useState(1);
-  const [exchangeAmmount, setExchangeAmmount] = useState(0)
-  const [result, setResult] = useState(0)
+  const [exchangeAmmount, setExchangeAmmount] = useState(0);
+  const [result, setResult] = useState(0);
 
   const convert = () => {
     const options = {
-      method: 'GET',
-      url: 'https://alpha-vantage.p.rapidapi.com/query',
-      params: {from_currency: selectedPrimaryCurrency, function: 'CURRENCY_EXCHANGE_RATE', to_currency: selectedSeconderyCurrency},
+      method: "GET",
+      url: "https://alpha-vantage.p.rapidapi.com/query",
+      params: {
+        from_currency: selectedPrimaryCurrency,
+        function: "CURRENCY_EXCHANGE_RATE",
+        to_currency: selectedSeconderyCurrency,
+      },
       headers: {
-        'X-RapidAPI-Host': 'alpha-vantage.p.rapidapi.com',
-        'X-RapidAPI-Key': 'e6476deb2dmshb2f511ebd65470fp10d0d2jsn7afb221ccb03'
-      }
+        "X-RapidAPI-Host": "alpha-vantage.p.rapidapi.com",
+        "X-RapidAPI-Key": "e6476deb2dmshb2f511ebd65470fp10d0d2jsn7afb221ccb03",
+      },
     };
-    
-    axios.request(options).then(function (response) {
-      console.log(response.data['Realtime Currency Exchange Rate']['5. Exchange Rate']);
-      setExchangeAmmount(response.data['Realtime Currency Exchange Rate']['5. Exchange Rate'])
-      setResult(response.data['Realtime Currency Exchange Rate']['5. Exchange Rate'] * ammount)
-    }).catch(function (error) {
-      console.error(error);
-    });
+
+    axios
+      .request(options)
+      .then(function (response) {
+        console.log(
+          response.data["Realtime Currency Exchange Rate"]["5. Exchange Rate"]
+        );
+        setExchangeAmmount(
+          response.data["Realtime Currency Exchange Rate"]["5. Exchange Rate"]
+        );
+        setResult(
+          response.data["Realtime Currency Exchange Rate"]["5. Exchange Rate"] *
+            ammount
+        );
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
   };
-  console.log(exchangeAmmount)
+  console.log(exchangeAmmount);
 
   return (
     <div className="currency-converter">
@@ -64,7 +78,12 @@ const CurrencyConverter = () => {
             <tr>
               <td>Secondery Currency</td>
               <td>
-                <input type="number" name="currency-ammount-2" value={result} />
+                <input
+                  type="number"
+                  name="currency-ammount-2"
+                  value={result}
+                  disabled={true}
+                />
               </td>
               <td>
                 <select
@@ -86,7 +105,11 @@ const CurrencyConverter = () => {
         </button>
       </div>
 
-      <ExchangeRate />
+      <ExchangeRate 
+      exchangeAmmount={exchangeAmmount}
+      selectedPrimaryCurrency={selectedPrimaryCurrency}
+      selectedSeconderyCurrency={selectedSeconderyCurrency}
+      />
     </div>
   );
 };
