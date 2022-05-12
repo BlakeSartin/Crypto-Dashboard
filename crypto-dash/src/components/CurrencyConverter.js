@@ -8,7 +8,13 @@ const CurrencyConverter = () => {
   const [selectedSeconderyCurrency, setSelectedSeconderyCurrency] =
     useState("BTC");
   const [ammount, setAmmount] = useState(1);
-  const [exchangeAmmount, setExchangeAmmount] = useState(0);
+ 
+
+    const [exchangedData, setExchangedData] = useState({
+      primaryCurrency: 'BTC',
+      seconderyCurrency: 'BTC',
+      exchangeRate: 0
+    })
   const [result, setResult] = useState(0);
 
   const convert = () => {
@@ -22,7 +28,7 @@ const CurrencyConverter = () => {
       },
       headers: {
         "X-RapidAPI-Host": "alpha-vantage.p.rapidapi.com",
-        "X-RapidAPI-Key": process.env.REACT_RAPID_API_KEY
+        "X-RapidAPI-Key": process.env.REACT_APP_RAPID_API_KEY
       },
     };
 
@@ -32,19 +38,21 @@ const CurrencyConverter = () => {
         console.log(
           response.data["Realtime Currency Exchange Rate"]["5. Exchange Rate"]
         );
-        setExchangeAmmount(
-          response.data["Realtime Currency Exchange Rate"]["5. Exchange Rate"]
-        );
         setResult(
           response.data["Realtime Currency Exchange Rate"]["5. Exchange Rate"] *
             ammount
         );
+        setExchangedData({
+          primaryCurrency: selectedPrimaryCurrency,
+          seconderyCurrency: selectedSeconderyCurrency,
+          ExchangeRate: response.data["Realtime Currency Exchange Rate"]["5. Exchange Rate"],
+        })
       })
       .catch(function (error) {
         console.error(error);
       });
   };
-  console.log(exchangeAmmount);
+  
 
   return (
     <div className="currency-converter">
@@ -105,10 +113,8 @@ const CurrencyConverter = () => {
         </button>
       </div>
 
-      <ExchangeRate 
-      exchangeAmmount={exchangeAmmount}
-      selectedPrimaryCurrency={selectedPrimaryCurrency}
-      selectedSeconderyCurrency={selectedSeconderyCurrency}
+      <ExchangeRate
+        exchangedData={exchangedData}
       />
     </div>
   );
