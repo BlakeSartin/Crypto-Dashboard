@@ -1,5 +1,6 @@
 import News from "./components/News";
 import CurrencyConverter from "./components/CurrencyConverter";
+import Clock from "./components/Clock";
 
 const App = () => {
   return (
@@ -8,7 +9,9 @@ const App = () => {
       <div className="app-wrap">
         <CurrencyConverter />
         <News />
+        
       </div>
+      <Clock/>
     </div>
   );
 };
